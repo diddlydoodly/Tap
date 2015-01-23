@@ -13,24 +13,9 @@ public class GameActivity extends ActionBarActivity {
 
   public static final String TAG = GameActivity.class.getSimpleName();
 
-  private Button startButton;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_game);
-
-    startButton = (Button) findViewById(R.id.startButton);
-    startButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        startGame();
-      }
-    });
-  }
-
-  private void startGame() {
-    Intent intent = new Intent(this, GameActivity.class);
-    startActivity(intent);
   }
 }

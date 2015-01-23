@@ -9,14 +9,4 @@
     tools:context=".GameActivity"
     android:background="#ffcccccc">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="START"
-        android:id="@+id/startButton"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:textSize="50sp"
-        android:background="@android:color/darker_gray"/>
-
 </RelativeLayout>
