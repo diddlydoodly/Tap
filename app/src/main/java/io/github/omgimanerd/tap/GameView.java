@@ -20,7 +20,8 @@ public class GameView extends View {
   private static final int OVERLAY_BORDER_RADIUS = 10;
   private static final String OVERLAY_COLOR = "#99808080";
   private static final String OVERLAY_TEXT_COLOR = "#FFCCCCCC";
-  private static final float OVERLAY_TEXT_SIZE = 30;
+  private static final float OVERLAY_TEXT_SIZE = 50;
+  private static final float OVERLAY_TEXT_SIZE_SMALL = 25;
 
   private static final int STATE_MENU = 0;
   private static final int STATE_GAME = 1;
@@ -34,6 +35,7 @@ public class GameView extends View {
   private RectF overlay_;
   private Paint overlayPaint_;
   private Paint textPaint_;
+  private Paint textPaintSmall_;
 
   public GameView(Context context) {
     super(context);
@@ -46,9 +48,16 @@ public class GameView extends View {
                          screenHeight_ - padding);
     overlayPaint_ = new Paint();
     overlayPaint_.setColor(Color.parseColor(OVERLAY_COLOR));
+
     textPaint_ = new Paint();
     textPaint_.setColor(Color.parseColor(OVERLAY_TEXT_COLOR));
     textPaint_.setTextSize(OVERLAY_TEXT_SIZE);
+    textPaint_.setTextAlign(Paint.Align.CENTER);
+
+    textPaintSmall_ = new Paint();
+    textPaintSmall_.setColor(Color.parseColor(OVERLAY_TEXT_COLOR));
+    textPaintSmall_.setTextSize(OVERLAY_TEXT_SIZE_SMALL);
+    textPaintSmall_.setTextAlign(Paint.Align.CENTER);
   }
 
   public void onDraw(Canvas canvas) {
@@ -56,8 +65,24 @@ public class GameView extends View {
       case STATE_MENU:
         canvas.drawRoundRect(overlay_, OVERLAY_BORDER_RADIUS,
                              OVERLAY_BORDER_RADIUS, overlayPaint_);
-        canvas.drawText("Start", 0, 5, screenWidth_ / 2,
+
+        String startText = getResources().getString(R.string.start_button);
+        canvas.drawText(startText, 0, startText.length(),
+                        screenWidth_ / 2,
                         screenHeight_ / 2, textPaint_);
+
+
+        String instructions = getResources().getString(R.string.instructions);
+        canvas.drawText(instructions, 0, instructions.length(),
+                        screenWidth_ / 2,
+                        3 * screenHeight_ / 4 - textPaint_.getTextSize(),
+                        textPaintSmall_);
+
+        String instructions2 = getResources().getString(R.string.instructions2);
+        canvas.drawText(instructions2, 0, instructions2.length() - 1,
+                        screenWidth_ / 2, 3 * screenHeight_ / 4,
+                        textPaintSmall_);
+
         break;
       case STATE_GAME:
         game_.update();
@@ -70,14 +95,22 @@ public class GameView extends View {
         if (game_.lost()) {
           STATE = STATE_LOST;
         }
-
-        invalidate();
         break;
       case STATE_LOST:
         canvas.drawRoundRect(overlay_, OVERLAY_BORDER_RADIUS,
                              OVERLAY_BORDER_RADIUS, overlayPaint_);
+        String lostText = getResources().getString(R.string.lost_screen);
+        canvas.drawText(lostText, 0, lostText.length(), screenWidth_ / 2,
+                        screenHeight_ / 2, textPaint_);
+
+        String score = "Score: " + game_.getScore();
+        canvas.drawText(score, 0, score.length(), screenWidth_ / 2,
+                        3 * screenHeight_ / 4, textPaintSmall_);
+
         break;
     }
+
+    invalidate();
   }
 
   public boolean onTouchEvent(MotionEvent event) {
@@ -86,7 +119,6 @@ public class GameView extends View {
         game_.onTouchEvent(event);
         break;
       default:
-        Log.d("touch", "touched");
         game_.resetGame();
         STATE = STATE_GAME;
         break;

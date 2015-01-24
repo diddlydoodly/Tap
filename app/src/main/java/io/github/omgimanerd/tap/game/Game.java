@@ -77,7 +77,6 @@ public class Game {
       }
     }
 
-    Log.d("time", "" + (lastBallSpawnTime_));
     if (currentTimeMillis() - lastBallSpawnTime_ >= spawnInterval_ ||
         balls_.size() == 0) {
       balls_.add(TapBall.generateRandomlyMovingBall(screenWidth_,
@@ -131,6 +130,7 @@ public class Game {
 
         balls_.remove(ball);
         ball = null;
+        return;
       }
     }
   }
