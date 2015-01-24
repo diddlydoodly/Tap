@@ -22,6 +22,7 @@ public class Game {
   private static final int DOUBLE_SPAWN_CHANCE = 25;
 
   private boolean lost_;
+  private int score_;
 
   private Random rand_;
   private double lastBallSpawnTime_;
@@ -124,6 +125,8 @@ public class Game {
         // Check if the ball is in the correct stripe.
         if (!rects_[ball.getColorIndex()].contains(ball.getX(), ball.getY())) {
           lost_ = true;
+        } else {
+          score_++;
         }
 
         balls_.remove(ball);
@@ -134,10 +137,15 @@ public class Game {
 
   public void resetGame() {
     lost_ = false;
+    score_ = 0;
     balls_.clear();
   }
 
   public boolean lost() {
     return lost_;
+  }
+
+  public int getScore() {
+    return score_;
   }
 }
