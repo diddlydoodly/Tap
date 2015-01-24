@@ -12,6 +12,8 @@ import io.github.omgimanerd.tap.game.Game;
  */
 public class GameView extends View {
 
+  private static final float FPS = 60;
+
   private float screenHeight_;
   private float screenWidth_;
   private Game game_;
@@ -24,11 +26,12 @@ public class GameView extends View {
   }
 
   public void onDraw(Canvas canvas) {
+
     game_.update();
     game_.redraw(canvas);
 
     try {
-      Thread.sleep((long) (1000 / Game.FPS));
+      Thread.sleep((long) (1000 / FPS));
     } catch (Exception e) {}
 
     invalidate();

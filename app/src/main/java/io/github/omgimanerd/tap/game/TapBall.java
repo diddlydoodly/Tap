@@ -12,8 +12,10 @@ import java.util.Random;
  */
 public class TapBall {
 
+  // The ball colors array is also parallel with respect to stripe color array.
   private static final int[] BALL_COLORS = new int[] {
-      Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW
+      Color.parseColor("#dd0000"), Color.parseColor("#0000dd"),
+      Color.parseColor("#00dd00"), Color.parseColor("#dddd00")
   };
 
   private float x_;
@@ -22,7 +24,6 @@ public class TapBall {
   private float radius_;
   private float amplitude_;
   private float wavelength_;
-  private RectF bounds_;
   private Paint paint_;
 
   public TapBall(float x, float y, float yOffset, float radius, float amplitude,
@@ -33,7 +34,6 @@ public class TapBall {
     radius_ = radius;
     amplitude_ = amplitude;
     wavelength_ = wavelength;
-    bounds_ = new RectF();
     paint_ = new Paint();
     paint_.setColor(color);
   }
@@ -45,30 +45,51 @@ public class TapBall {
     float y = screenHeight / 2;
     float yOffset = screenHeight / 2;
     float radius = screenHeight / 8;
-    float amplitude = rand.nextInt((int) (3 * screenHeight / 8));
-    float wavelength = rand.nextInt((int) (screenWidth / 8)) + screenWidth / 8;
-    int color = TapBall.BALL_COLORS[rand.nextInt(TapBall.BALL_COLORS.length)];
+    float amplitude = 3 * screenHeight / 8;
+    if (rand.nextInt(2) == 0) {
+      amplitude *= -1;
+    }
+    float wavelength = rand.nextInt((int) (screenWidth / 10)) + screenWidth /
+        10;
+    int color = BALL_COLORS[rand.nextInt(BALL_COLORS.length)];
     return new TapBall(x, y, yOffset, radius, amplitude, wavelength, color);
   }
 
   public void update() {
-    x_ += 5;
+    x_ += 10;
     y_ = (float) (amplitude_ * Math.sin(x_ / wavelength_)) + yOffset_;
-    bounds_.top = y_ - radius_;
-    bounds_.right = x_ + radius_;
-    bounds_.bottom = y_ + radius_;
-    bounds_.left = x_ - radius_;
   }
 
   public void redraw(Canvas canvas) {
-    canvas.drawOval(bounds_, paint_);
+    canvas.drawCircle(x_, y_, radius_, paint_);
   }
 
   public boolean isOutOfBounds(float screenWidth) {
     return x_ > screenWidth + radius_;
   }
 
-  public int getColor() {
-    return paint_.getColor();
+  public float getX() {
+    return x_;
+  }
+
+  public float getY() {
+    return y_;
+  }
+
+  public float[] getCenter() {
+    return new float[] {x_, y_};
+  }
+
+  public float getRadius() {
+    return radius_;
+  }
+
+  public int getColorIndex() {
+    for (int i = 0; i < BALL_COLORS.length; ++i) {
+      if (paint_.getColor() == BALL_COLORS[i]) {
+        return i;
+      }
+    }
+    throw new Error("WTF, something really bad happened.");
   }
 }
