@@ -17,9 +17,9 @@ import static java.lang.System.currentTimeMillis;
  */
 public class Game {
   private static final int TOUCH_DISTANCE_THRESHOLD = 10;
-  private static final int MIN_SPAWN_INTERVAL = 400;
+  private static final int MIN_SPAWN_INTERVAL = 500;
   private static final int MAX_SPAWN_INTERVAL = 2000;
-  private static final int DOUBLE_SPAWN_CHANCE = 25;
+  private static final int DOUBLE_SPAWN_CHANCE = 15;
 
   private boolean lost_;
   private int score_;

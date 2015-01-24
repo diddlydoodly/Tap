@@ -49,8 +49,8 @@ public class TapBall {
     if (rand.nextInt(2) == 0) {
       amplitude *= -1;
     }
-    float wavelength = rand.nextInt((int) (screenWidth / 10)) + screenWidth /
-        10;
+    float wavelength = rand.nextInt((int) (screenWidth / 15)) + screenWidth /
+        15;
     int color = BALL_COLORS[rand.nextInt(BALL_COLORS.length)];
     return new TapBall(x, y, yOffset, radius, amplitude, wavelength, color);
   }

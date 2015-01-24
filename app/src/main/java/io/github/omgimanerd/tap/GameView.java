@@ -114,14 +114,18 @@ public class GameView extends View {
   }
 
   public boolean onTouchEvent(MotionEvent event) {
-    switch (STATE) {
-      case STATE_GAME:
-        game_.onTouchEvent(event);
-        break;
-      default:
-        game_.resetGame();
-        STATE = STATE_GAME;
-        break;
+    int action = event.getAction();
+
+    if (action == MotionEvent.ACTION_DOWN) {
+      switch (STATE) {
+        case STATE_GAME:
+          game_.onTouchEvent(event);
+          break;
+        default:
+          game_.resetGame();
+          STATE = STATE_GAME;
+          break;
+      }
     }
     return true;
   }
