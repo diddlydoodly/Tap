@@ -17,9 +17,9 @@ import static java.lang.System.currentTimeMillis;
  */
 public class Game {
   private static final int TOUCH_DISTANCE_THRESHOLD = 20;
-  private static final int MIN_SPAWN_INTERVAL = 750;
-  private static final int MAX_SPAWN_INTERVAL = 2250;
-  private static final int DOUBLE_SPAWN_CHANCE = 15;
+  private static final int INITIAL_DELAY = 2000;
+  private static final int MIN_SPAWN_INTERVAL = 500;
+  private static final int MAX_SPAWN_INTERVAL = 2500;
 
   private boolean lost_;
   private int score_;
@@ -46,7 +46,7 @@ public class Game {
 
     rand_ = new Random();
     lastBallSpawnTime_ = 0;
-    spawnInterval_ = 0;
+    spawnInterval_ = INITIAL_DELAY;
     screenWidth_ = screenWidth;
     screenHeight_ = screenHeight;;
     balls_ = new ArrayList<TapBall>();
@@ -81,10 +81,6 @@ public class Game {
         balls_.size() == 0) {
       balls_.add(TapBall.generateRandomlyMovingBall(screenWidth_,
                                                     screenHeight_));
-      if (rand_.nextInt(100) < DOUBLE_SPAWN_CHANCE) {
-        balls_.add(TapBall.generateRandomlyMovingBall(screenWidth_,
-                                                      screenHeight_));
-      }
       lastBallSpawnTime_ = currentTimeMillis();
       spawnInterval_ = rand_.nextInt(MAX_SPAWN_INTERVAL) + MIN_SPAWN_INTERVAL;
     }

@@ -18,6 +18,7 @@ public class GameView extends View {
 
   private static final float FPS = 60;
   private static final int OVERLAY_BORDER_RADIUS = 10;
+  private static final int SCREEN_PADDING = 40;
   private static final String OVERLAY_COLOR = "#99808080";
   private static final String OVERLAY_TEXT_COLOR = "#FFCCCCCC";
   private static final float OVERLAY_TEXT_SIZE = 50;
@@ -40,7 +41,8 @@ public class GameView extends View {
   public GameView(Context context) {
     super(context);
     screenWidth_ = getResources().getDisplayMetrics().widthPixels;
-    screenHeight_ = getResources().getDisplayMetrics().heightPixels;
+    screenHeight_ = getResources().getDisplayMetrics().heightPixels -
+        SCREEN_PADDING;
     game_ = new Game(screenWidth_, screenHeight_);
 
     float padding = ((screenWidth_ / 10) + (screenHeight_ / 10)) / 2;
