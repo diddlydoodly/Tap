@@ -9,6 +9,8 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.android.gms.ads.*;
+
 import io.github.omgimanerd.tap.game.Game;
 
 /**
@@ -29,7 +31,6 @@ public class GameView extends View {
   private static final int STATE_LOST = 2;
   private int STATE = 0;
 
-  private Context context_;
   private SharedPreferences tapData_;
   private float screenHeight_;
   private float screenWidth_;
@@ -40,10 +41,11 @@ public class GameView extends View {
   private Paint textPaint_;
   private Paint textPaintSmall_;
 
+  private InterstitialAd ad_;
+
   public GameView(Context context) {
     super(context);
-    context_ = context;
-    tapData_ = context_.getSharedPreferences("tapData", Context.MODE_PRIVATE);
+    tapData_ = context.getSharedPreferences("tapData", Context.MODE_PRIVATE);
     screenWidth_ = getResources().getDisplayMetrics().widthPixels;
     screenHeight_ = getResources().getDisplayMetrics().heightPixels -
         SCREEN_PADDING;
@@ -54,16 +56,22 @@ public class GameView extends View {
                          screenHeight_ - padding);
     overlayPaint_ = new Paint();
     overlayPaint_.setColor(Color.parseColor(OVERLAY_COLOR));
-
     textPaint_ = new Paint();
     textPaint_.setColor(Color.parseColor(OVERLAY_TEXT_COLOR));
     textPaint_.setTextSize(OVERLAY_TEXT_SIZE);
     textPaint_.setTextAlign(Paint.Align.CENTER);
-
     textPaintSmall_ = new Paint();
     textPaintSmall_.setColor(Color.parseColor(OVERLAY_TEXT_COLOR));
     textPaintSmall_.setTextSize(OVERLAY_TEXT_SIZE_SMALL);
     textPaintSmall_.setTextAlign(Paint.Align.CENTER);
+
+    ad_ = new InterstitialAd(context);
+    ad_.setAdUnitId(getResources().getString(R.string.ad_unit_id));
+
+    AdRequest adRequest = new AdRequest.Builder().addTestDevice
+        (AdRequest.DEVICE_ID_EMULATOR).build();
+
+    ad_.loadAd(adRequest);
   }
 
   public void onDraw(Canvas canvas) {
@@ -79,13 +87,12 @@ public class GameView extends View {
 
 
         String instructions = getResources().getString(R.string.instructions);
-        canvas.drawText(instructions, 0, instructions.length(),
+        canvas.drawText(instructions, 0, instructions.length() / 2,
                         screenWidth_ / 2,
                         3 * screenHeight_ / 4 - textPaint_.getTextSize(),
                         textPaintSmall_);
-
-        String instructions2 = getResources().getString(R.string.instructions2);
-        canvas.drawText(instructions2, 0, instructions2.length() - 1,
+        canvas.drawText(instructions, instructions.length()/ 2,
+                        instructions.length() - 1,
                         screenWidth_ / 2, 3 * screenHeight_ / 4,
                         textPaintSmall_);
 
@@ -126,6 +133,9 @@ public class GameView extends View {
                         textPaintSmall_);
         canvas.drawText(scoreString, 0, scoreString.length(), screenWidth_ / 2,
                         3 * screenHeight_ / 4, textPaintSmall_);
+
+        displayAd();
+
         break;
     }
 
@@ -152,5 +162,11 @@ public class GameView extends View {
       }
     }
     return true;
+  }
+
+  public void displayAd() {
+    if (ad_.isLoaded()) {
+      ad_.show();
+    }
   }
 }

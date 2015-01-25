@@ -5,15 +5,17 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.android.gms.ads.*;
 
 public class GameActivity extends Activity {
 
   public static final String TAG = GameActivity.class.getSimpleName();
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  private View gameView_;
+
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    View gameView = new GameView(this);
-    setContentView(gameView);
+    gameView_ = new GameView(this);
+    setContentView(gameView_);
   }
 }
