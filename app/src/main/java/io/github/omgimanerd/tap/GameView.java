@@ -1,11 +1,11 @@
 package io.github.omgimanerd.tap;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -29,6 +29,8 @@ public class GameView extends View {
   private static final int STATE_LOST = 2;
   private int STATE = 0;
 
+  private Context context_;
+  private SharedPreferences tapData_;
   private float screenHeight_;
   private float screenWidth_;
   private Game game_;
@@ -40,6 +42,8 @@ public class GameView extends View {
 
   public GameView(Context context) {
     super(context);
+    context_ = context;
+    tapData_ = context_.getSharedPreferences("tapData", Context.MODE_PRIVATE);
     screenWidth_ = getResources().getDisplayMetrics().widthPixels;
     screenHeight_ = getResources().getDisplayMetrics().heightPixels -
         SCREEN_PADDING;
@@ -105,10 +109,23 @@ public class GameView extends View {
         canvas.drawText(lostText, 0, lostText.length(), screenWidth_ / 2,
                         screenHeight_ / 2, textPaint_);
 
-        String score = "Score: " + game_.getScore();
-        canvas.drawText(score, 0, score.length(), screenWidth_ / 2,
-                        3 * screenHeight_ / 4, textPaintSmall_);
+        int score = game_.getScore();
+        int highscore = tapData_.getInt("tapHighScore", 0);
+        if (score > highscore) {
+          SharedPreferences.Editor editor = tapData_.edit();
+          editor.putInt("tapHighScore", score);
+          editor.commit();
+        }
 
+        String scoreString = "Score: " + score;
+        String highscoreString = "High score: " + highscore;
+
+        canvas.drawText(highscoreString, 0, highscoreString.length(),
+                        screenWidth_ / 2,
+                        3 * screenHeight_ / 4 - textPaintSmall_.getTextSize(),
+                        textPaintSmall_);
+        canvas.drawText(scoreString, 0, scoreString.length(), screenWidth_ / 2,
+                        3 * screenHeight_ / 4, textPaintSmall_);
         break;
     }
 
@@ -125,6 +142,11 @@ public class GameView extends View {
           break;
         default:
           game_.resetGame();
+
+          try {
+            Thread.sleep((long) 1000);
+          } catch (Exception e) {}
+
           STATE = STATE_GAME;
           break;
       }
