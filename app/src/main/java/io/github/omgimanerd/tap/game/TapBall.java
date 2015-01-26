@@ -76,10 +76,6 @@ public class TapBall {
     return y_;
   }
 
-  public float[] getCenter() {
-    return new float[] {x_, y_};
-  }
-
   public float getRadius() {
     return radius_;
   }

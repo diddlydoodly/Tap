@@ -16,6 +16,7 @@ import io.github.omgimanerd.tap.game.Game;
 /**
  * Created by omgimanerd on 1/23/15.
  */
+
 public class GameView extends View {
 
   private static final float FPS = 60;
@@ -104,9 +105,9 @@ public class GameView extends View {
 
         String scoreText = "" + game_.getScore();
         canvas.drawText(scoreText, 0, scoreText.length(),
-                        textPaintSmall_.getTextSize() + SCORE_TEXT_PADDING,
-                        textPaintSmall_.getTextSize() + SCORE_TEXT_PADDING,
-                        textPaintSmall_);
+                        textPaint_.getTextSize() + SCORE_TEXT_PADDING,
+                        textPaint_.getTextSize() + SCORE_TEXT_PADDING,
+                        textPaint_);
 
         try {
           Thread.sleep((long) (1000 / FPS));
