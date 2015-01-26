@@ -9,8 +9,6 @@ import com.google.android.gms.ads.*;
 
 public class GameActivity extends Activity {
 
-  public static final String TAG = GameActivity.class.getSimpleName();
-
   private View gameView_;
 
   public void onCreate(Bundle savedInstanceState) {

@@ -25,6 +25,7 @@ public class GameView extends View {
   private static final String OVERLAY_TEXT_COLOR = "#FFCCCCCC";
   private static final float OVERLAY_TEXT_SIZE = 50;
   private static final float OVERLAY_TEXT_SIZE_SMALL = 25;
+  private static final float SCORE_TEXT_PADDING = 10;
 
   private static final int STATE_MENU = 0;
   private static final int STATE_GAME = 1;
@@ -41,7 +42,7 @@ public class GameView extends View {
   private Paint textPaint_;
   private Paint textPaintSmall_;
 
-  private InterstitialAd ad_;
+  private InterstitialAd interstitialAd_;
 
   public GameView(Context context) {
     super(context);
@@ -65,13 +66,13 @@ public class GameView extends View {
     textPaintSmall_.setTextSize(OVERLAY_TEXT_SIZE_SMALL);
     textPaintSmall_.setTextAlign(Paint.Align.CENTER);
 
-    ad_ = new InterstitialAd(context);
-    ad_.setAdUnitId(getResources().getString(R.string.ad_unit_id));
+    interstitialAd_ = new InterstitialAd(context);
+    interstitialAd_.setAdUnitId(getResources().getString(R.string.ad_unit_id));
 
     AdRequest adRequest = new AdRequest.Builder().addTestDevice
         (AdRequest.DEVICE_ID_EMULATOR).build();
 
-    ad_.loadAd(adRequest);
+    interstitialAd_.loadAd(adRequest);
   }
 
   public void onDraw(Canvas canvas) {
@@ -100,6 +101,12 @@ public class GameView extends View {
       case STATE_GAME:
         game_.update();
         game_.redraw(canvas);
+
+        String scoreText = "" + game_.getScore();
+        canvas.drawText(scoreText, 0, scoreText.length(),
+                        textPaintSmall_.getTextSize() + SCORE_TEXT_PADDING,
+                        textPaintSmall_.getTextSize() + SCORE_TEXT_PADDING,
+                        textPaintSmall_);
 
         try {
           Thread.sleep((long) (1000 / FPS));
@@ -165,8 +172,8 @@ public class GameView extends View {
   }
 
   public void displayAd() {
-    if (ad_.isLoaded()) {
-      ad_.show();
+    if (interstitialAd_.isLoaded()) {
+      interstitialAd_.show();
     }
   }
 }
