@@ -71,6 +71,7 @@ public class Game {
       TapBall ball = balls_.get(i);
       ball.update();
       if (ball.isOutOfBounds(screenWidth_)) {
+        Sound.play("lost");
         this.lost_ = true;
         balls_.remove(ball);
         ball = null;
@@ -118,8 +119,10 @@ public class Game {
       if (touchedBall(touchPoint, ball)) {
         // Check if the ball is in the correct stripe.
         if (!rects_[ball.getColorIndex()].contains(ball.getX(), ball.getY())) {
+          Sound.play("lost");
           lost_ = true;
         } else {
+          Sound.play("blop");
           score_++;
         }
 

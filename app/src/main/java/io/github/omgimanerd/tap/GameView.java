@@ -8,10 +8,10 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
-
-import com.google.android.gms.ads.*;
+//import com.google.android.gms.ads.*;
 
 import io.github.omgimanerd.tap.game.Game;
+import io.github.omgimanerd.tap.game.Sound;
 
 /**
  * Created by omgimanerd on 1/23/15.
@@ -43,7 +43,7 @@ public class GameView extends View {
   private Paint textPaint_;
   private Paint textPaintSmall_;
 
-  private InterstitialAd interstitialAd_;
+  //private InterstitialAd interstitialAd_;
 
   public GameView(Context context) {
     super(context);
@@ -67,13 +67,12 @@ public class GameView extends View {
     textPaintSmall_.setTextSize(OVERLAY_TEXT_SIZE_SMALL);
     textPaintSmall_.setTextAlign(Paint.Align.CENTER);
 
+    /*
     interstitialAd_ = new InterstitialAd(context);
     interstitialAd_.setAdUnitId(getResources().getString(R.string.ad_unit_id));
-
     AdRequest adRequest = new AdRequest.Builder().addTestDevice
         (AdRequest.DEVICE_ID_EMULATOR).build();
-
-    interstitialAd_.loadAd(adRequest);
+    interstitialAd_.loadAd(adRequest);*/
   }
 
   public void onDraw(Canvas canvas) {
@@ -142,7 +141,7 @@ public class GameView extends View {
         canvas.drawText(scoreString, 0, scoreString.length(), screenWidth_ / 2,
                         3 * screenHeight_ / 4, textPaintSmall_);
 
-        displayAd();
+        //displayAd();
 
         break;
     }
@@ -159,6 +158,7 @@ public class GameView extends View {
           game_.onTouchEvent(event);
           break;
         default:
+          Sound.play("blop");
           game_.resetGame();
 
           try {
@@ -171,10 +171,10 @@ public class GameView extends View {
     }
     return true;
   }
-
+  /*
   public void displayAd() {
     if (interstitialAd_.isLoaded()) {
       interstitialAd_.show();
     }
-  }
+  }*/
 }
