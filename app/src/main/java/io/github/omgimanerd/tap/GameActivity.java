@@ -23,6 +23,7 @@ public class GameActivity extends Activity {
   }
 
   public void onDestroy() {
+    super.onDestroy();
     Sound.release();
     gameView_ = null;
   }

@@ -20,13 +20,10 @@ import io.github.omgimanerd.tap.game.Sound;
 public class GameView extends View {
 
   private static final float FPS = 60;
+  private static final double SCREEN_CLIP_RATIO = 19.0/20.0;
   private static final int OVERLAY_BORDER_RADIUS = 10;
-  private static final int SCREEN_PADDING = 40;
   private static final String OVERLAY_COLOR = "#99808080";
   private static final String OVERLAY_TEXT_COLOR = "#FFCCCCCC";
-  private static final float OVERLAY_TEXT_SIZE = 50;
-  private static final float OVERLAY_TEXT_SIZE_SMALL = 25;
-  private static final float SCORE_TEXT_PADDING = 10;
 
   private static final int STATE_MENU = 0;
   private static final int STATE_GAME = 1;
@@ -40,7 +37,7 @@ public class GameView extends View {
 
   private RectF overlay_;
   private Paint overlayPaint_;
-  private Paint textPaint_;
+  private Paint textPaintLarge_;
   private Paint textPaintSmall_;
 
   //private InterstitialAd interstitialAd_;
@@ -49,8 +46,8 @@ public class GameView extends View {
     super(context);
     tapData_ = context.getSharedPreferences("tapData", Context.MODE_PRIVATE);
     screenWidth_ = getResources().getDisplayMetrics().widthPixels;
-    screenHeight_ = getResources().getDisplayMetrics().heightPixels -
-        SCREEN_PADDING;
+    screenHeight_ = (float) (getResources().getDisplayMetrics().heightPixels *
+        SCREEN_CLIP_RATIO);
     game_ = new Game(screenWidth_, screenHeight_);
 
     float padding = ((screenWidth_ / 10) + (screenHeight_ / 10)) / 2;
@@ -58,13 +55,15 @@ public class GameView extends View {
                          screenHeight_ - padding);
     overlayPaint_ = new Paint();
     overlayPaint_.setColor(Color.parseColor(OVERLAY_COLOR));
-    textPaint_ = new Paint();
-    textPaint_.setColor(Color.parseColor(OVERLAY_TEXT_COLOR));
-    textPaint_.setTextSize(OVERLAY_TEXT_SIZE);
-    textPaint_.setTextAlign(Paint.Align.CENTER);
+    textPaintLarge_ = new Paint();
+    textPaintLarge_.setColor(Color.parseColor(OVERLAY_TEXT_COLOR));
+    textPaintLarge_.setTextSize(
+        getResources().getDimensionPixelSize(R.dimen.text_size_large));
+    textPaintLarge_.setTextAlign(Paint.Align.CENTER);
     textPaintSmall_ = new Paint();
     textPaintSmall_.setColor(Color.parseColor(OVERLAY_TEXT_COLOR));
-    textPaintSmall_.setTextSize(OVERLAY_TEXT_SIZE_SMALL);
+    textPaintSmall_.setTextSize(
+        getResources().getDimensionPixelSize(R.dimen.text_size_small));
     textPaintSmall_.setTextAlign(Paint.Align.CENTER);
 
     /*
@@ -84,13 +83,13 @@ public class GameView extends View {
         String startText = getResources().getString(R.string.start_button);
         canvas.drawText(startText, 0, startText.length(),
                         screenWidth_ / 2,
-                        screenHeight_ / 2, textPaint_);
+                        screenHeight_ / 2, textPaintLarge_);
 
 
         String instructions = getResources().getString(R.string.instructions);
         canvas.drawText(instructions, 0, instructions.length() / 2,
                         screenWidth_ / 2,
-                        3 * screenHeight_ / 4 - textPaint_.getTextSize(),
+                        3 * screenHeight_ / 4 - textPaintSmall_.getTextSize(),
                         textPaintSmall_);
         canvas.drawText(instructions, instructions.length()/ 2,
                         instructions.length() - 1,
@@ -104,9 +103,9 @@ public class GameView extends View {
 
         String scoreText = "" + game_.getScore();
         canvas.drawText(scoreText, 0, scoreText.length(),
-                        textPaint_.getTextSize() + SCORE_TEXT_PADDING,
-                        textPaint_.getTextSize() + SCORE_TEXT_PADDING,
-                        textPaint_);
+                        textPaintLarge_.getTextSize(),
+                        textPaintLarge_.getTextSize(),
+                        textPaintLarge_);
 
         try {
           Thread.sleep((long) (1000 / FPS));
@@ -121,7 +120,7 @@ public class GameView extends View {
                              OVERLAY_BORDER_RADIUS, overlayPaint_);
         String lostText = getResources().getString(R.string.lost_screen);
         canvas.drawText(lostText, 0, lostText.length(), screenWidth_ / 2,
-                        screenHeight_ / 2, textPaint_);
+                        screenHeight_ / 2, textPaintLarge_);
 
         int score = game_.getScore();
         int highscore = tapData_.getInt("tapHighScore", 0);

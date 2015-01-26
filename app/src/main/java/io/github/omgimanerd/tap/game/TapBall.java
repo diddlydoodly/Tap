@@ -24,16 +24,18 @@ public class TapBall {
   private float radius_;
   private float amplitude_;
   private float wavelength_;
+  private float updateSpeed_;
   private Paint paint_;
 
   public TapBall(float x, float y, float yOffset, float radius, float amplitude,
-                 float wavelength, int color) {
+                 float wavelength, float updateSpeed, int color) {
     x_ = x;
     y_ = y;
     yOffset_ = yOffset;
     radius_ = radius;
     amplitude_ = amplitude;
     wavelength_ = wavelength;
+    updateSpeed_ = updateSpeed;
     paint_ = new Paint();
     paint_.setColor(color);
   }
@@ -51,12 +53,14 @@ public class TapBall {
     }
     float wavelength = rand.nextInt((int) (screenWidth / 15)) + screenWidth /
         15;
+    float updateSpeed = screenWidth / 80;
     int color = BALL_COLORS[rand.nextInt(BALL_COLORS.length)];
-    return new TapBall(x, y, yOffset, radius, amplitude, wavelength, color);
+    return new TapBall(x, y, yOffset, radius, amplitude, wavelength,
+                       updateSpeed, color);
   }
 
   public void update() {
-    x_ += 10;
+    x_ += updateSpeed_;
     y_ = (float) (amplitude_ * Math.sin(x_ / wavelength_)) + yOffset_;
   }
 
