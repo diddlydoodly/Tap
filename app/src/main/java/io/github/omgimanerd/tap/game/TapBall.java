@@ -14,8 +14,10 @@ public class TapBall {
 
   // The ball colors array is also parallel with respect to stripe color array.
   private static final int[] BALL_COLORS = new int[] {
-      Color.parseColor("#dd0000"), Color.parseColor("#0000dd"),
-      Color.parseColor("#00dd00"), Color.parseColor("#dddd00")
+      Color.parseColor("#dd0000"), // Red
+      Color.parseColor("#0000dd"), // Blue
+      Color.parseColor("#00dd00"), // Green
+      Color.parseColor("#dddd00")  // Yellow
   };
 
   private float x_;
