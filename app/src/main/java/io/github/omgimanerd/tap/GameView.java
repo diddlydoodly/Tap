@@ -13,6 +13,8 @@ import android.view.View;
 import io.github.omgimanerd.tap.game.Game;
 import io.github.omgimanerd.tap.game.Sound;
 
+import static java.lang.System.currentTimeMillis;
+
 /**
  * Created by omgimanerd on 1/23/15.
  */
@@ -22,7 +24,7 @@ public class GameView extends View {
   private static final float FPS = 60;
   private static final double SCREEN_CLIP_RATIO = 19.0/20.0;
   private static final int OVERLAY_BORDER_RADIUS = 10;
-  private static final String OVERLAY_COLOR = "#99808080";
+  private static final String OVERLAY_COLOR = "#DD888888";
   private static final String OVERLAY_TEXT_COLOR = "#FFCCCCCC";
 
   private static final int STATE_MENU = 0;
@@ -34,6 +36,7 @@ public class GameView extends View {
   private float screenHeight_;
   private float screenWidth_;
   private Game game_;
+  private double lastUpdateTime_;
 
   private RectF overlay_;
   private Paint overlayPaint_;
@@ -49,6 +52,7 @@ public class GameView extends View {
     screenHeight_ = (float) (getResources().getDisplayMetrics().heightPixels *
         SCREEN_CLIP_RATIO);
     game_ = new Game(screenWidth_, screenHeight_);
+    lastUpdateTime_ = currentTimeMillis();
 
     float padding = ((screenWidth_ / 10) + (screenHeight_ / 10)) / 2;
     overlay_ = new RectF(padding, padding, screenWidth_ - padding,
@@ -75,52 +79,59 @@ public class GameView extends View {
   }
 
   public void onDraw(Canvas canvas) {
+
+    game_.redrawBackground(canvas);
+
     switch (STATE) {
       case STATE_MENU:
         canvas.drawRoundRect(overlay_, OVERLAY_BORDER_RADIUS,
                              OVERLAY_BORDER_RADIUS, overlayPaint_);
 
         String startText = getResources().getString(R.string.start_button);
-        canvas.drawText(startText, 0, startText.length(),
-                        screenWidth_ / 2,
-                        screenHeight_ / 2, textPaintLarge_);
+        canvas.drawText(startText, screenWidth_ / 2, screenHeight_ / 2,
+                        textPaintLarge_);
 
 
+        String highscoreString = "Highscore: " +
+            tapData_.getInt("tapHighScore", 0);
+        canvas.drawText(highscoreString, screenWidth_ / 2,
+                        3 * screenHeight_ / 4 - 2 * textPaintSmall_
+                .getTextSize(),
+                        textPaintSmall_);
         String instructions = getResources().getString(R.string.instructions);
         canvas.drawText(instructions, 0, instructions.length() / 2,
                         screenWidth_ / 2,
-                        3 * screenHeight_ / 4 - textPaintSmall_.getTextSize(),
+                        3 * screenHeight_ / 4,
                         textPaintSmall_);
-        canvas.drawText(instructions, instructions.length()/ 2,
-                        instructions.length() - 1,
-                        screenWidth_ / 2, 3 * screenHeight_ / 4,
+        canvas.drawText(instructions, instructions.length() / 2,
+                        instructions.length(),
+                        screenWidth_ / 2, 3 * screenHeight_ / 4 +
+                textPaintSmall_.getTextSize(),
                         textPaintSmall_);
-
         break;
+
       case STATE_GAME:
-        game_.update();
-        game_.redraw(canvas);
+        if (currentTimeMillis() - lastUpdateTime_ >= 1000 / FPS) {
+          game_.update();
+          game_.redrawBalls(canvas);
 
-        String scoreText = "" + game_.getScore();
-        canvas.drawText(scoreText, 0, scoreText.length(),
-                        textPaintLarge_.getTextSize(),
-                        textPaintLarge_.getTextSize(),
-                        textPaintLarge_);
+          String scoreText = "" + game_.getScore();
+          canvas.drawText(scoreText, textPaintLarge_.getTextSize(),
+                          textPaintLarge_.getTextSize(),
+                          textPaintLarge_);
 
-        try {
-          Thread.sleep((long) (1000 / FPS));
-        } catch (Exception e) {}
-
-        if (game_.lost()) {
-          STATE = STATE_LOST;
+          if (game_.lost()) {
+            STATE = STATE_LOST;
+          }
         }
         break;
+
       case STATE_LOST:
         canvas.drawRoundRect(overlay_, OVERLAY_BORDER_RADIUS,
                              OVERLAY_BORDER_RADIUS, overlayPaint_);
         String lostText = getResources().getString(R.string.lost_screen);
-        canvas.drawText(lostText, 0, lostText.length(), screenWidth_ / 2,
-                        screenHeight_ / 2, textPaintLarge_);
+        canvas.drawText(lostText, screenWidth_ / 2, screenHeight_ / 2,
+                        textPaintLarge_);
 
         int score = game_.getScore();
         int highscore = tapData_.getInt("tapHighScore", 0);
@@ -131,17 +142,15 @@ public class GameView extends View {
         }
 
         String scoreString = "Score: " + score;
-        String highscoreString = "High score: " + highscore;
+        highscoreString = "High score: " + highscore;
 
-        canvas.drawText(highscoreString, 0, highscoreString.length(),
-                        screenWidth_ / 2,
+        canvas.drawText(highscoreString, screenWidth_ / 2,
                         3 * screenHeight_ / 4 - textPaintSmall_.getTextSize(),
                         textPaintSmall_);
-        canvas.drawText(scoreString, 0, scoreString.length(), screenWidth_ / 2,
+        canvas.drawText(scoreString, screenWidth_ / 2,
                         3 * screenHeight_ / 4, textPaintSmall_);
 
         //displayAd();
-
         break;
     }
 

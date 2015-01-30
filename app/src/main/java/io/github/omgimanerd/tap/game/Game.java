@@ -16,7 +16,6 @@ import static java.lang.System.currentTimeMillis;
  * Created by omgimanerd on 1/23/15.
  */
 public class Game {
-  private static final int TOUCH_DISTANCE_THRESHOLD = 20;
   private static final int INITIAL_DELAY = 2000;
   private static final int MIN_SPAWN_INTERVAL = 250;
   private static final int MAX_SPAWN_INTERVAL = 1750;
@@ -87,22 +86,18 @@ public class Game {
     }
   }
 
-  public void redraw(Canvas canvas) {
+  public void redrawBackground(Canvas canvas) {
     // Render the background.
-    for (int i = 0; i < colors_.length; ++i) {
+    for (int i = 0; i < colors_.length; ++ i) {
       canvas.drawRect(rects_[i], paints_[i]);
     }
+  }
 
+  public void redrawBalls(Canvas canvas) {
     // Render the balls.
     for (int i = 0; i < balls_.size(); ++i) {
       balls_.get(i).redraw(canvas);
     }
-  }
-
-  private boolean touchedBall(float[] touchPoint, TapBall ball) {
-    double distance = Math.sqrt(Math.pow(touchPoint[0] - ball.getX(), 2) +
-                                    Math.pow(touchPoint[1] - ball.getY(), 2));
-    return distance < ball.getRadius() + TOUCH_DISTANCE_THRESHOLD;
   }
 
   public void onTouchEvent(MotionEvent event) {
@@ -116,7 +111,7 @@ public class Game {
 
     for (int i = balls_.size() - 1; i >= 0; --i) {
       TapBall ball = balls_.get(i);
-      if (touchedBall(touchPoint, ball)) {
+      if (ball.touched(touchPoint)) {
         // Check if the ball is in the correct stripe.
         if (!rects_[ball.getColorIndex()].contains(ball.getX(), ball.getY())) {
           Sound.play("lost");

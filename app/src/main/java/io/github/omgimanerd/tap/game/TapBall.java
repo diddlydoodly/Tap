@@ -12,6 +12,11 @@ import java.util.Random;
  */
 public class TapBall {
 
+  private static final int TOUCH_DISTANCE_THRESHOLD = 20;
+  private static final int SIN_WAVE = 0;
+  private static final int COS_WAVE = 1;
+  private static final int NUM_WAVES = 2;
+
   // The ball colors array is also parallel with respect to stripe color array.
   private static final int[] BALL_COLORS = new int[] {
       Color.parseColor("#dd0000"), // Red
@@ -26,17 +31,19 @@ public class TapBall {
   private float radius_;
   private float amplitude_;
   private float wavelength_;
+  private int wavetype_;
   private float updateSpeed_;
   private Paint paint_;
 
   public TapBall(float x, float y, float yOffset, float radius, float amplitude,
-                 float wavelength, float updateSpeed, int color) {
+                 float wavelength, int wavetype, float updateSpeed, int color) {
     x_ = x;
     y_ = y;
     yOffset_ = yOffset;
     radius_ = radius;
     amplitude_ = amplitude;
     wavelength_ = wavelength;
+    wavetype_ = wavetype;
     updateSpeed_ = updateSpeed;
     paint_ = new Paint();
     paint_.setColor(color);
@@ -46,7 +53,7 @@ public class TapBall {
                                                    float screenHeight) {
     Random rand = new Random();
     float x = 0;
-    float y = screenHeight / 2;
+    float y = 0;
     float yOffset = screenHeight / 2;
     float radius = screenHeight / 8;
     float amplitude = 3 * screenHeight / 8;
@@ -55,15 +62,27 @@ public class TapBall {
     }
     float wavelength = rand.nextInt((int) (screenWidth / 15)) + screenWidth /
         15;
-    float updateSpeed = screenWidth / 80;
+    int wavetype = rand.nextInt(NUM_WAVES);
+    float updateSpeed = screenWidth / 150;
     int color = BALL_COLORS[rand.nextInt(BALL_COLORS.length)];
-    return new TapBall(x, y, yOffset, radius, amplitude, wavelength,
-                       updateSpeed, color);
+
+    TapBall tapBall = new TapBall(x, y, yOffset, radius, amplitude,
+                                  wavelength, wavetype, updateSpeed, color);
+    tapBall.update();
+    return tapBall;
   }
 
   public void update() {
     x_ += updateSpeed_;
-    y_ = (float) (amplitude_ * Math.sin(x_ / wavelength_)) + yOffset_;
+    switch (wavetype_) {
+      case SIN_WAVE:
+        y_ = (float) (amplitude_ * Math.sin(x_ / wavelength_)) + yOffset_;
+        break;
+
+      case COS_WAVE:
+        y_ = (float) (amplitude_ * Math.cos(x_ / wavelength_)) + yOffset_;
+        break;
+    }
   }
 
   public void redraw(Canvas canvas) {
@@ -72,6 +91,12 @@ public class TapBall {
 
   public boolean isOutOfBounds(float screenWidth) {
     return x_ > screenWidth + radius_;
+  }
+
+  public boolean touched(float[] touchPoint) {
+    double distance = Math.sqrt(Math.pow(touchPoint[0] - getX(), 2) +
+                                    Math.pow(touchPoint[1] - getY(), 2));
+    return distance < getRadius() + TOUCH_DISTANCE_THRESHOLD;
   }
 
   public float getX() {
