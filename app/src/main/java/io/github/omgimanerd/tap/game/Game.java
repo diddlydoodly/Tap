@@ -4,7 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
@@ -19,6 +18,14 @@ public class Game {
   private static final int INITIAL_DELAY = 2000;
   private static final int MIN_SPAWN_INTERVAL = 250;
   private static final int MAX_SPAWN_INTERVAL = 1750;
+  protected static final int[] COLORS = new int[] {
+      Color.parseColor("#D32F2F"),
+      Color.parseColor("#303F9F"),
+      Color.parseColor("#4CAF50"),
+      Color.parseColor("#FFF689")
+  };
+  protected static final int STROKE_COLOR = Color.parseColor("#727272");
+  protected static final float STROKE_WIDTH = 5;
 
   private boolean lost_;
   private int score_;
@@ -31,10 +38,7 @@ public class Game {
 
   // The Paint, Color, and RectF arrays are all parallel arrays.
   // Hence, the rectangular stripes are drawn in the order that the colors
-  // array is declared.
-  private int[] colors_ = new int[] {
-      Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW
-  };
+  // array is declared. The Balls will be drawn with this colors array.
   private Paint[] paints_;
   private RectF[] rects_;
 
@@ -50,13 +54,13 @@ public class Game {
     screenHeight_ = screenHeight;;
     balls_ = new ArrayList<TapBall>();
 
-    paints_ = new Paint[colors_.length];
+    paints_ = new Paint[COLORS.length];
     for (int i = 0; i < 4; ++i) {
       paints_[i] = new Paint();
-      paints_[i].setColor(colors_[i]);
+      paints_[i].setColor(COLORS[i]);
     }
 
-    rects_ = new RectF[colors_.length];
+    rects_ = new RectF[COLORS.length];
     rects_[0] = new RectF(0, 0, screenWidth, screenHeight / 4);
     rects_[1] = new RectF(0, screenHeight / 4, screenWidth, screenHeight / 2);
     rects_[2] = new RectF(0, screenHeight / 2, screenWidth,
@@ -88,7 +92,7 @@ public class Game {
 
   public void redrawBackground(Canvas canvas) {
     // Render the background.
-    for (int i = 0; i < colors_.length; ++ i) {
+    for (int i = 0; i < COLORS.length; ++ i) {
       canvas.drawRect(rects_[i], paints_[i]);
     }
   }
@@ -102,29 +106,33 @@ public class Game {
 
   public void onTouchEvent(MotionEvent event) {
     // Register the touch event if it was on top of a ball.
-    // We search backwards through the ArrayList in case a ball is on top of
-    // another one since the balls are drawn from the ArrayList iterating
-    // forward.
     float[] touchPoint = new float[] {
         event.getX(), event.getY()
     };
 
-    for (int i = balls_.size() - 1; i >= 0; --i) {
+    // Find the ball closest to the touch point.
+    TapBall closestBall = balls_.get(0);
+    for (int i = 1; i < balls_.size(); ++i) {
       TapBall ball = balls_.get(i);
-      if (ball.touched(touchPoint)) {
-        // Check if the ball is in the correct stripe.
-        if (!rects_[ball.getColorIndex()].contains(ball.getX(), ball.getY())) {
-          Sound.play("lost");
-          lost_ = true;
-        } else {
-          Sound.play("blop");
-          score_++;
-        }
-
-        balls_.remove(ball);
-        ball = null;
-        return;
+      if (ball.distanceFrom(touchPoint) < closestBall.distanceFrom(touchPoint)) {
+        closestBall = ball;
       }
+    }
+
+    // Only register if it was close enough to count as a touch point.
+    if (closestBall.touched(touchPoint)) {
+      // Check if the ball is in the correct stripe.
+      if (rects_[closestBall.getColorIndex()].contains(closestBall.getX(),
+                                                       closestBall.getY())) {
+        Sound.play("blop");
+        score_++;
+      } else {
+        Sound.play("lost");
+        lost_ = true;
+      }
+
+      balls_.remove(closestBall);
+      return;
     }
   }
 

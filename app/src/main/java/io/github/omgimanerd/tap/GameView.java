@@ -26,6 +26,7 @@ public class GameView extends View {
   private static final int OVERLAY_BORDER_RADIUS = 10;
   private static final String OVERLAY_COLOR = "#DD888888";
   private static final String OVERLAY_TEXT_COLOR = "#FFCCCCCC";
+  private static final String OVERLAY_TEXT_SHADOW_COLOR = "#AA000000";
 
   private static final int STATE_MENU = 0;
   private static final int STATE_GAME = 1;
@@ -61,11 +62,15 @@ public class GameView extends View {
     overlayPaint_.setColor(Color.parseColor(OVERLAY_COLOR));
     textPaintLarge_ = new Paint();
     textPaintLarge_.setColor(Color.parseColor(OVERLAY_TEXT_COLOR));
+    textPaintLarge_.setShadowLayer(5, 5, 5,
+                                   Color.parseColor(OVERLAY_TEXT_SHADOW_COLOR));
     textPaintLarge_.setTextSize(
         getResources().getDimensionPixelSize(R.dimen.text_size_large));
     textPaintLarge_.setTextAlign(Paint.Align.CENTER);
     textPaintSmall_ = new Paint();
     textPaintSmall_.setColor(Color.parseColor(OVERLAY_TEXT_COLOR));
+    textPaintSmall_.setShadowLayer(5, 5, 5,
+                                   Color.parseColor(OVERLAY_TEXT_SHADOW_COLOR));
     textPaintSmall_.setTextSize(
         getResources().getDimensionPixelSize(R.dimen.text_size_small));
     textPaintSmall_.setTextAlign(Paint.Align.CENTER);

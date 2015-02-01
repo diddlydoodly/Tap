@@ -1,9 +1,7 @@
 package io.github.omgimanerd.tap.game;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 
 import java.util.Random;
 
@@ -12,18 +10,10 @@ import java.util.Random;
  */
 public class TapBall {
 
-  private static final int TOUCH_DISTANCE_THRESHOLD = 20;
+  private static final int TOUCH_DISTANCE_LEEWAY = 20;
   private static final int SIN_WAVE = 0;
   private static final int COS_WAVE = 1;
   private static final int NUM_WAVES = 2;
-
-  // The ball colors array is also parallel with respect to stripe color array.
-  private static final int[] BALL_COLORS = new int[] {
-      Color.parseColor("#dd0000"), // Red
-      Color.parseColor("#0000dd"), // Blue
-      Color.parseColor("#00dd00"), // Green
-      Color.parseColor("#dddd00")  // Yellow
-  };
 
   private float x_;
   private float y_;
@@ -33,10 +23,12 @@ public class TapBall {
   private float wavelength_;
   private int wavetype_;
   private float updateSpeed_;
+  private int colorIndex_;
   private Paint paint_;
 
   public TapBall(float x, float y, float yOffset, float radius, float amplitude,
-                 float wavelength, int wavetype, float updateSpeed, int color) {
+                 float wavelength, int wavetype, float updateSpeed,
+                 int colorIndex) {
     x_ = x;
     y_ = y;
     yOffset_ = yOffset;
@@ -45,8 +37,8 @@ public class TapBall {
     wavelength_ = wavelength;
     wavetype_ = wavetype;
     updateSpeed_ = updateSpeed;
+    colorIndex_ = colorIndex;
     paint_ = new Paint();
-    paint_.setColor(color);
   }
 
   public static TapBall generateRandomlyMovingBall(float screenWidth,
@@ -64,10 +56,11 @@ public class TapBall {
         15;
     int wavetype = rand.nextInt(NUM_WAVES);
     float updateSpeed = screenWidth / 150;
-    int color = BALL_COLORS[rand.nextInt(BALL_COLORS.length)];
+    int colorIndex = rand.nextInt(Game.COLORS.length);
 
     TapBall tapBall = new TapBall(x, y, yOffset, radius, amplitude,
-                                  wavelength, wavetype, updateSpeed, color);
+                                  wavelength, wavetype, updateSpeed,
+                                  colorIndex);
     tapBall.update();
     return tapBall;
   }
@@ -86,6 +79,13 @@ public class TapBall {
   }
 
   public void redraw(Canvas canvas) {
+    paint_.setStyle(Paint.Style.FILL);
+    paint_.setColor(Game.COLORS[colorIndex_]);
+    canvas.drawCircle(x_, y_, radius_, paint_);
+
+    paint_.setStyle(Paint.Style.STROKE);
+    paint_.setStrokeWidth(Game.STROKE_WIDTH);
+    paint_.setColor(Game.STROKE_COLOR);
     canvas.drawCircle(x_, y_, radius_, paint_);
   }
 
@@ -93,10 +93,13 @@ public class TapBall {
     return x_ > screenWidth + radius_;
   }
 
+  public double distanceFrom(float[] touchPoint) {
+    return Math.sqrt(Math.pow(touchPoint[0] - getX(), 2) +
+                     Math.pow(touchPoint[1] - getY(), 2));
+  }
+
   public boolean touched(float[] touchPoint) {
-    double distance = Math.sqrt(Math.pow(touchPoint[0] - getX(), 2) +
-                                    Math.pow(touchPoint[1] - getY(), 2));
-    return distance < getRadius() + TOUCH_DISTANCE_THRESHOLD;
+    return distanceFrom(touchPoint) < getRadius() + TOUCH_DISTANCE_LEEWAY;
   }
 
   public float getX() {
@@ -112,11 +115,6 @@ public class TapBall {
   }
 
   public int getColorIndex() {
-    for (int i = 0; i < BALL_COLORS.length; ++i) {
-      if (paint_.getColor() == BALL_COLORS[i]) {
-        return i;
-      }
-    }
-    throw new Error("WTF, something really bad happened.");
+    return colorIndex_;
   }
 }
