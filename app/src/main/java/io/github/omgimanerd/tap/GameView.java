@@ -170,6 +170,7 @@ public class GameView extends View {
         case STATE_GAME:
           game_.onTouchEvent(event);
           break;
+
         default:
           Sound.play("blop");
           game_.resetGame();

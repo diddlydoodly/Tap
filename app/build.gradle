@@ -8,14 +8,13 @@ android {
     applicationId "io.github.omgimanerd.tap"
     minSdkVersion 9
     targetSdkVersion 21
-    versionCode 4
-    versionName "1.3"
+    versionCode 5
+    versionName "1.31"
   }
   buildTypes {
     release {
-      runProguard true
-      proguardFiles getDefaultProguardFile('proguard-android.txt'),
-          'proguard-rules.pro'
+      apply plugin: 'checkstyle'
+      apply plugin: 'signing'
     }
   }
 }

@@ -105,6 +105,11 @@ public class Game {
   }
 
   public void onTouchEvent(MotionEvent event) {
+    // Exit if the balls_ ArrayList is empty.
+    if (balls_.size() == 0) {
+      return;
+    }
+
     // Register the touch event if it was on top of a ball.
     float[] touchPoint = new float[] {
         event.getX(), event.getY()
