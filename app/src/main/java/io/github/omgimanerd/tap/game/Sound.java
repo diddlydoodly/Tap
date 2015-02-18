@@ -21,8 +21,6 @@ public class Sound {
     sounds_ = new HashMap();
     sounds_.put("blop", new Integer(soundPool_.load(context, R.raw.blop, 1)));
     sounds_.put("lost", new Integer(soundPool_.load(context, R.raw.lost, 1)));
-    sounds_.put("new_highscore", new Integer(soundPool_.load(
-        context, R.raw.new_highscore, 1)));
   }
 
   public static void play(String soundName) {

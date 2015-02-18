@@ -8,6 +8,10 @@
     <string name="start_button">Start</string>
     <string name="instructions">To play, tap the colored balls when they are on
         top of their corresponding color.</string>
+    <string name="highscore">Highscore</string>
+    <string name="score">Score</string>
     <string name="lost_screen">You lost!</string>
+    <string name="new_highscore">Congratulations, you beat your high
+        score!</string>
 
 </resources>

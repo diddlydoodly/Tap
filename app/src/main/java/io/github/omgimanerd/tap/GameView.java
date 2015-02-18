@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 //import com.google.android.gms.ads.*;
 
 import io.github.omgimanerd.tap.game.Game;
@@ -97,8 +98,8 @@ public class GameView extends View {
                         textPaintLarge_);
 
 
-        String highscoreString = "Highscore: " +
-            tapData_.getInt("tapHighScore", 0);
+        String highscoreString = getResources().getString(R.string.highscore)
+            + ": " + tapData_.getInt("tapHighScore", 0);
         canvas.drawText(highscoreString, screenWidth_ / 2,
                         3 * screenHeight_ / 4 - 2 * textPaintSmall_
                 .getTextSize(),
@@ -144,11 +145,14 @@ public class GameView extends View {
           SharedPreferences.Editor editor = tapData_.edit();
           editor.putInt("tapHighScore", score);
           editor.commit();
-          Sound.play("new_highscore");
+          Toast.makeText(getContext(), R.string.new_highscore,
+                         Toast.LENGTH_SHORT).show();
         }
 
-        String scoreString = "Score: " + score;
-        highscoreString = "High score: " + highscore;
+        String scoreString = getResources().getString(R.string.score) + ": "
+            + score;
+        highscoreString = getResources().getString(R.string.highscore) + ": " +
+            highscore;
 
         canvas.drawText(highscoreString, screenWidth_ / 2,
                         3 * screenHeight_ / 4 - textPaintSmall_.getTextSize(),
