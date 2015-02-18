@@ -144,6 +144,7 @@ public class GameView extends View {
           SharedPreferences.Editor editor = tapData_.edit();
           editor.putInt("tapHighScore", score);
           editor.commit();
+          Sound.play("new_highscore");
         }
 
         String scoreString = "Score: " + score;
@@ -185,6 +186,12 @@ public class GameView extends View {
     }
     return true;
   }
+
+  public void onPause() {
+    game_.resetGame();
+    STATE = STATE_MENU;
+  }
+
   /*
   public void displayAd() {
     if (interstitialAd_.isLoaded()) {

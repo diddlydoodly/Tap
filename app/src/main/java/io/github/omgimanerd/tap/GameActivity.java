@@ -12,7 +12,7 @@ import io.github.omgimanerd.tap.game.Sound;
 
 public class GameActivity extends Activity {
 
-  private View gameView_;
+  private GameView gameView_;
 
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -20,6 +20,11 @@ public class GameActivity extends Activity {
     Sound.loadSounds(this);
     gameView_ = new GameView(this);
     setContentView(gameView_);
+  }
+
+  public void onPause() {
+    super.onPause();
+    gameView_.onPause();
   }
 
   public void onDestroy() {
