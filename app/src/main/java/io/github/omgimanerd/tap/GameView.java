@@ -23,7 +23,7 @@ import static java.lang.System.currentTimeMillis;
 public class GameView extends View {
 
   private static final float FPS = 60;
-  private static final double SCREEN_CLIP_RATIO = 19.0/20.0;
+  private static final int LOST_TIME_PAUSE = 1500;
   private static final int OVERLAY_BORDER_RADIUS = 10;
   private static final String OVERLAY_COLOR = "#DD888888";
   private static final String OVERLAY_TEXT_COLOR = "#FFCCCCCC";
@@ -39,6 +39,7 @@ public class GameView extends View {
   private float screenWidth_;
   private Game game_;
   private double lastUpdateTime_;
+  private double gameLostTime_;
 
   private RectF overlay_;
   private Paint overlayPaint_;
@@ -51,8 +52,7 @@ public class GameView extends View {
     super(context);
     tapData_ = context.getSharedPreferences("tapData", Context.MODE_PRIVATE);
     screenWidth_ = getResources().getDisplayMetrics().widthPixels;
-    screenHeight_ = (float) (getResources().getDisplayMetrics().heightPixels *
-        SCREEN_CLIP_RATIO);
+    screenHeight_ = getResources().getDisplayMetrics().heightPixels;
     game_ = new Game(screenWidth_, screenHeight_);
     lastUpdateTime_ = currentTimeMillis();
 
@@ -127,6 +127,7 @@ public class GameView extends View {
                           textPaintLarge_);
 
           if (game_.lost()) {
+            gameLostTime_ = currentTimeMillis();
             STATE = STATE_LOST;
           }
         }
@@ -176,15 +177,18 @@ public class GameView extends View {
           game_.onTouchEvent(event);
           break;
 
-        default:
+        case STATE_MENU:
           Sound.play("blop");
           game_.resetGame();
-
-          try {
-            Thread.sleep((long) 1000);
-          } catch (Exception e) {}
-
           STATE = STATE_GAME;
+          break;
+
+        case STATE_LOST:
+          if (currentTimeMillis() > gameLostTime_ + LOST_TIME_PAUSE) {
+            Sound.play("blop");
+            game_.resetGame();
+            STATE = STATE_GAME;
+          }
           break;
       }
     }
