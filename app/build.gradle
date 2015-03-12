@@ -8,8 +8,8 @@ android {
     applicationId "io.github.omgimanerd.tap"
     minSdkVersion 9
     targetSdkVersion 21
-    versionCode 5
-    versionName "1.31"
+    versionCode 6
+    versionName "1.32"
   }
   buildTypes {
     release {
